@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Citas de Uñas</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <style>
+       
+        /* Pequeños ajustes opcionales */
+        body {
+            background-color: #f8f9fa; /* Fondo gris claro */
+            padding-top: 56px; /* Ajuste para Navbar fija (opcional, si usas fixed-top) */
+        }
+        .card {
+            margin-bottom: 1.5rem; /* Espacio entre las tarjetas */
+        }
+        /* Estilo para el enlace activo en el navbar */
+        .navbar-nav .nav-link.active {
+           font-weight: bold;
+           /* color: #fff !important; /* Puedes forzar el color si es necesario */
+        }
+
+        /* Reducir padding en card-body para pantallas pequeñas (si lo añadiste antes) */
+        @media (max-width: 767.98px) {
+            .card-body {
+                padding: 0.8rem;
+            }
+
+            /* Reducir tamaño de fuente base para pantallas pequeñas */
+            html {
+                font-size: 13px; /* O prueba 13px, 0.875rem, etc. */
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar-heart-fill me-2" viewBox="0 0 16 16">
+             <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM0 5v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5zm8 4.493c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132"/>
+          </svg>
+          Luisa Patiño Nails
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="nav-view">Consultar Citas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="nav-add">Agregar/Editar Cita</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="nav-reports">Reportes</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid mt-4">
+
+        <div id="section-view-daily">
+            <div class="card shadow-sm" id="view-appointments">
+                <div class="card-header bg-success text-white">
+                    <h2 class="h5 mb-0">Ver Citas y Total Diario</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 align-items-end mb-3">
+                        <div class="col-md-4">
+                            <label for="viewDate" class="form-label">Seleccionar Fecha:</label>
+                            <input type="date" class="form-control" id="viewDate">
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success w-100" id="loadAppointmentsBtn">Cargar Citas</button>
+                        </div>
+                         <div class="col-md-4 text-md-end">
+                             <h3 class="h5 mb-0">Total del Día: <span class="badge bg-primary fs-6" id="dailyTotal">$ 0</span></h3>
+                        </div>
+                    </div>
+
+                    <h2 class="h5 mt-4 mb-3">Lista de Citas</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle" id="appointmentsTable">
+                            <thead class="table-light text-center">
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Valor ($)</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appointmentsTbody">
+                                <tr>
+                                    <td colspan="5" class="text-center fst-italic text-muted">Selecciona una fecha y carga las citas.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-add-edit" style="display: none;">
+            <div class="card shadow-sm" id="add-appointment">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Agregar / Editar Cita</h2>
+                </div>
+                <div class="card-body">
+                    <form id="appointmentForm">
+                        <input type="hidden" id="editAppointmentId">
+                        <div class="mb-3">
+                            <label for="clientName" class="form-label">Nombre Cliente:</label>
+                            <input type="text" class="form-control" id="clientName" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="appointmentDate" class="form-label">Fecha:</label>
+                                <input type="date" class="form-control" id="appointmentDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="appointmentTime" class="form-label">Hora:</label>
+                                <input type="time" class="form-control" id="appointmentTime" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cost" class="form-label">Valor ($):</label>
+                            <div class="input-group">
+                                 <span class="input-group-text">$</span>
+                                 <input type="number" class="form-control" id="cost" step="1" min="0" required placeholder="Ej: 50000">
+                            </div>
+                            <div class="form-text">Ingrese el valor sin puntos ni decimales.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Agregar Cita</button>
+                        <button type="button" class="btn btn-secondary ms-2" id="cancelEditBtn" style="display: none;">Cancelar Edición</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-reports" style="display: none;">
+            <div class="card shadow-sm" id="range-report-section">
+                <div class="card-header bg-info text-white">
+                    <h2 class="h5 mb-0">Reporte de Ingresos por Rango</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label for="startDate" class="form-label">Fecha Inicio:</label>
+                            <input type="date" class="form-control" id="startDate">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="endDate" class="form-label">Fecha Fin:</label>
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-info w-100" id="generateReportBtn">Generar Reporte</button>
+                        </div>
+                    </div>
+                    <div id="reportErrorArea" class="mt-3 alert alert-danger" style="display: none;"></div>
+                    <div id="reportResultArea" class="mt-4 p-3 border rounded bg-light" style="display: none;">
+                         <h4 class="h6">Resultado del Reporte:</h4>
+                         <p class="mb-1"><strong>Periodo:</strong> <span id="reportDateRange"></span></p>
+                         <p class="mb-1"><strong>Citas Encontradas:</strong> <span id="reportAppointmentCount" class="fw-bold">0</span></p>
+                         <p class="mb-2"><strong>Total Ingresos:</strong> <span id="reportTotal" class="fw-bold fs-5 text-success"></span></p>
+                         <button class="btn btn-danger btn-sm" id="printPdfBtn" style="display: none;">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-pdf-fill me-1" viewBox="0 0 16 16">
+                                 <path d="M5.523 12.424c.14-.082.293-.162.459-.252.166-.09.337-.187.518-.293a6 6 0 0 1 .815-.443c.266-.11.561-.21.884-.304a7 7 0 0 1 1.085-.337c.317-.05.63-.078.943-.095a24 24 0 0 1 .817-.025c.307-.007.614-.007.917 0a24 24 0 0 0 .817.025c.312.017.626.045.943.095a7 7 0 0 0 1.085.337c.323.094.618.194.884.304a6 6 0 0 0 .815.443c.181.106.352.203.518.293.166.09.318.17.459.252a1.1 1.1 0 0 1 .51.858c.017.348.006.711-.04 1.102a2 2 0 0 1-.51.858c-.14.082-.293.162-.459.252a6 6 0 0 1-.815.443c-.266.11-.561.21-.884.304a7 7 0 0 1-1.085.337c-.317.05-.63.078-.943.095a24 24 0 0 1-.817.025c-.307.007-.614.007-.917 0a24 24 0 0 0-.817-.025c-.312-.017-.626-.045-.943-.095a7 7 0 0 0-1.085-.337c-.323-.094-.618-.194-.884-.304a6 6 0 0 0-.815-.443c-.181-.106-.352-.203-.518-.293-.166-.09-.318-.17-.459-.252a1.1 1.1 0 0 1-.51-.858c-.017-.348-.006-.711.04-1.102a2 2 0 0 1 .51-.858"/>
+                                 <path d="M4.603 14.087a.8.8 0 0 1-1.027-.42l-1.968-4.425a.5.5 0 0 1 .048-.488l.5-.8a.5.5 0 0 1 .687-.048l.5.8a.5.5 0 0 1-.048.488l-1.968 4.425a.8.8 0 0 1 .207.42zM6.499 14.087a.8.8 0 0 1-1.027-.42l-1.968-4.425a.5.5 0 0 1 .048-.488l.5-.8a.5.5 0 0 1 .687-.048l.5.8a.5.5 0 0 1-.048.488l-1.968 4.425a.8.8 0 0 1 .207.42z"/>
+                                 <path d="M11.354 6.354a.5.5 0 0 0-.708-.708L8 8.293 6.354 6.646a.5.5 0 1 0-.708.708L7.293 9l-1.647 1.646a.5.5 0 0 0 .708.708L8 9.707l1.646 1.647a.5.5 0 0 0 .708-.708L8.707 9z"/>
+                                 <path d="M4.002 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1"/>
+                             </svg>
+                             Imprimir PDF Detallado
+                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
